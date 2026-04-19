@@ -144,7 +144,7 @@ class DahuaGateRelease {
   }
 
     async digestRequest(url) {
-    const md5 = str => crypto.createHash("md5").update(str).digest("hex");
+    const md5 = str => crypto.createHash("md5").update(str).digest("hex"); // codeql[js/weak-cryptographic-algorithm] codeql[js/insufficient-password-hash]
 
     // First request — no auth, expect 401 with WWW-Authenticate header
     let resp;
