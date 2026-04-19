@@ -1,21 +1,18 @@
 "use strict";
 
 const AxiosDigestAuth = require("@mhoc/axios-digest-auth").default;
-let Service, Characteristic;
-
 module.exports = (homebridge) => {
-  Service        = homebridge.hap.Service;
-  Characteristic = homebridge.hap.Characteristic;
-
   homebridge.registerAccessory(
-    "homebridge-dahua-gate-release",   // plugin ID
-    "Dahua Gate Release",              // accessory name (aligned with config.schema.json)
+    "homebridge-dahua-gate",
+    "Dahua Gate",
     DahuaGateRelease
   );
 };
 
 class DahuaGateRelease {
-  constructor(log, config) {
+  constructor(log, config, api) {
+    this.Service         = api.hap.Service;
+    this.Characteristic  = api.hap.Characteristic;
     this.log             = log;
     this.name            = config.name;
     this.ip              = config.ip;
@@ -27,27 +24,27 @@ class DahuaGateRelease {
     this.fallbackDelay   = config.fallbackDelay   ?? 5000;
     this.autoLockTime    = config.autoLockTime    ?? 0;
     this.autoLockUnit    = config.autoLockUnit    ?? "seconds";
-    this._faultState     = Characteristic.StatusFault.NO_FAULT;
+    this._faultState     = this.Characteristic.StatusFault.NO_FAULT;
 
     this.client = new AxiosDigestAuth({
       username: this.username,
       password: this.password
     });
 
-    this.service = new Service.LockMechanism(this.name);
+    this.service = new this.Service.LockMechanism(this.name);
 
     this.service
-      .getCharacteristic(Characteristic.StatusFault)
-      .on("get", cb => cb(null, this._faultState));
+      .getCharacteristic(this.Characteristic.StatusFault)
+      .onGet(async () => this._faultState);
 
     this.service
-      .getCharacteristic(Characteristic.LockCurrentState)
-      .on("get", this.handleGetCurrentState.bind(this));
+      .getCharacteristic(this.Characteristic.LockCurrentState)
+      .onGet(this.handleGetCurrentState.bind(this));
 
     this.service
-      .getCharacteristic(Characteristic.LockTargetState)
-      .on("get", this.handleGetTargetState.bind(this))
-      .on("set", this.handleSetTargetState.bind(this));
+      .getCharacteristic(this.Characteristic.LockTargetState)
+      .onGet(this.handleGetTargetState.bind(this))
+      .onSet(this.handleSetTargetState.bind(this));
 
     this.startPolling();
   }
@@ -56,16 +53,16 @@ class DahuaGateRelease {
     return [this.service];
   }
 
-  handleGetCurrentState(callback) {
-    callback(null, Characteristic.LockCurrentState.SECURED);
+  async handleGetCurrentState() {
+    return this.Characteristic.LockCurrentState.SECURED;
   }
 
-  handleGetTargetState(callback) {
-    callback(null, Characteristic.LockTargetState.SECURED);
+  async handleGetTargetState() {
+    return this.Characteristic.LockTargetState.SECURED;
   }
 
-  async handleSetTargetState(value, callback) {
-    if (value === Characteristic.LockTargetState.UNSECURED) {
+  async handleSetTargetState(value) {
+    if (value === this.Characteristic.LockTargetState.UNSECURED) {
       this.log.info(`Sending openDoor command to ${this.ip}`);
       const url = `http://${this.ip}/cgi-bin/accessControl.cgi?action=openDoor&channel=1&UserID=0`;
       let attempts = 0;
@@ -78,8 +75,8 @@ class DahuaGateRelease {
           }
 
           this.service.updateCharacteristic(
-            Characteristic.LockCurrentState,
-            Characteristic.LockCurrentState.UNSECURED
+            this.Characteristic.LockCurrentState,
+            this.Characteristic.LockCurrentState.UNSECURED
           );
 
           this.scheduleAutoLock();
@@ -94,8 +91,6 @@ class DahuaGateRelease {
 
       await doRequest();
     }
-
-    callback();
   }
 
   scheduleAutoLock() {
@@ -115,12 +110,12 @@ class DahuaGateRelease {
 
       setTimeout(() => {
         this.service.updateCharacteristic(
-          Characteristic.LockCurrentState,
-          Characteristic.LockCurrentState.SECURED
+          this.Characteristic.LockCurrentState,
+          this.Characteristic.LockCurrentState.SECURED
         );
         this.service.updateCharacteristic(
-          Characteristic.LockTargetState,
-          Characteristic.LockTargetState.SECURED
+          this.Characteristic.LockTargetState,
+          this.Characteristic.LockTargetState.SECURED
         );
         if (this.verboseLogging) {
           this.log.debug("Auto-lock executed");
@@ -136,14 +131,14 @@ class DahuaGateRelease {
         if (this.verboseLogging) {
           this.log.debug("Intercom reachable");
         }
-        this._faultState = Characteristic.StatusFault.NO_FAULT;
+        this._faultState = this.Characteristic.StatusFault.NO_FAULT;
       } catch (err) {
         this.log.error(`Poll failed: ${err.message}`);
-        this._faultState = Characteristic.StatusFault.GENERAL_FAULT;
+        this._faultState = this.Characteristic.StatusFault.GENERAL_FAULT;
       }
 
       this.service.updateCharacteristic(
-        Characteristic.StatusFault,
+        this.Characteristic.StatusFault,
         this._faultState
       );
     }, this.pollInterval);
