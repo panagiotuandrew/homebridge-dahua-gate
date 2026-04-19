@@ -1,6 +1,8 @@
 "use strict";
 
-const AxiosDigestAuth = require("@mhoc/axios-digest-auth").default;
+const axios = require("axios");
+const crypto = require("crypto");
+
 module.exports = (homebridge) => {
   homebridge.registerAccessory(
     "homebridge-dahua-gate",
@@ -26,10 +28,7 @@ class DahuaGateRelease {
     this.autoLockUnit    = config.autoLockUnit    ?? "seconds";
     this._faultState     = this.Characteristic.StatusFault.NO_FAULT;
 
-    this.client = new AxiosDigestAuth({
-      username: this.username,
-      password: this.password
-    });
+    this.axios = axios;
 
     this.service = new this.Service.LockMechanism(this.name);
 
@@ -69,7 +68,7 @@ class DahuaGateRelease {
 
       const doRequest = async () => {
         try {
-          const resp = await this.client.request({ url, method: "GET" });
+          await this.digestRequest(url);
           if (this.verboseLogging) {
             this.log.debug(`HTTP ${resp.status}`);
           }
@@ -127,7 +126,7 @@ class DahuaGateRelease {
   startPolling() {
     setInterval(async () => {
       try {
-        await this.client.request({ url: `http://${this.ip}/`, method: "GET" });
+        await this.digestRequest(url);
         if (this.verboseLogging) {
           this.log.debug("Intercom reachable");
         }

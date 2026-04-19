@@ -13,8 +13,8 @@
     "accessControl"
   ],
   "publishConfig": {
-  "access": "public"
-},
+    "access": "public"
+  },
   "author": {
     "name": "netmatrixtech"
   },
@@ -32,7 +32,7 @@
     "node": "^18.20.4 || ^20.15.1 || ^22"
   },
   "dependencies": {
-    "@mhoc/axios-digest-auth": "^0.8.0"
+    "axios": "^1.0.0"
   },
   "peerDependencies": {
     "homebridge": "^1.6.0 || ^2.0.0"
