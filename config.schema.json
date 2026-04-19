@@ -1,10 +1,10 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "pluginAlias": "Dahua Gate Release",
+  "pluginAlias": "Dahua Gate",
   "pluginType": "accessory",
   "singular": false,
   "schema": {
-    "title": "Dahua Gate Release",
+    "title": "Dahua Gate",
     "type": "object",
     "required": ["name", "ip", "username", "password"],
     "properties": {
