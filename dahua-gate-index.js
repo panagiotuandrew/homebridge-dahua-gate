@@ -27,25 +27,29 @@ class DahuaGatePlatform {
   }
 
   discoverDevices() {
-    const devices = this.config.devices || [];
+  const devices = this.config.devices || [];
 
-    for (const device of devices) {
-      const uuid = this.api.hap.uuid.generate(device.name);
-      const existingAccessory = this.accessories.find(a => a.UUID === uuid);
+  if (devices.length === 0) {
+    this.log.warn("No devices configured. Add at least one device in the plugin settings.");
+    return;
+  }
 
-      if (existingAccessory) {
-        this.log.info(`Restoring accessory from cache: ${existingAccessory.displayName}`);
-        new DahuaGateAccessory(this.log, existingAccessory, this.api, device);
-      } else {
-        this.log.info(`Adding new accessory: ${device.name}`);
-        const accessory = new this.api.platformAccessory(device.name, uuid);
-        new DahuaGateAccessory(this.log, accessory, this.api, device);
-        this.api.registerPlatformAccessories("homebridge-dahua-gate", "Dahua Gate", [accessory]);
-      }
+  for (const device of devices) {
+    const uuid = this.api.hap.uuid.generate(device.name);
+    const existingAccessory = this.accessories.find(a => a.UUID === uuid);
+
+    if (existingAccessory) {
+      this.log.info(`Restoring accessory from cache: ${existingAccessory.displayName}`);
+      new DahuaGateAccessory(this.log, existingAccessory, this.api, device);
+    } else {
+      this.log.info(`Adding new accessory: ${device.name}`);
+      const accessory = new this.api.platformAccessory(device.name, uuid);
+      new DahuaGateAccessory(this.log, accessory, this.api, device);
+      this.api.registerPlatformAccessories("homebridge-dahua-gate", "Dahua Gate", [accessory]);
     }
   }
 }
-
+}
 class DahuaGateAccessory {
   constructor(log, accessory, api, device) {
     this.Service        = api.hap.Service;
