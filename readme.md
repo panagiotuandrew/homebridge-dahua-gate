@@ -20,7 +20,7 @@ For documentation, check the wiki.
 > Apple treats locks and garage doors as security devices, meaning that manual confirmation is required when using automations or Siri. To bypass this restriction, you can use a virtual switch plugin like [Homebridge Dummy](https://github.com/mpatfield/homebridge-dummy) to trigger the accessory indirectly.
 
 ## Requirements
- - Homebridge supported versions: 1.8.0 or later, and 2.0.0 or later
+ - Homebridge supported versions: 1.8.0 or later, and 2.0.0-beta.0 or later
  - Node.js supported versions: 20, 22, and 24
 
 ## Installing in Homebridge
