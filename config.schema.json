@@ -1,73 +1,83 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "pluginAlias": "Dahua Gate",
-  "pluginType": "accessory",
+  "pluginType": "platform",
   "singular": false,
   "schema": {
     "title": "Dahua Gate",
     "type": "object",
-    "required": ["name", "ip", "username", "password"],
     "properties": {
-      "name": {
-        "type": "string",
-        "title": "Accessory Name",
-        "minLength": 1
-      },
-      "ip": {
-        "type": "string",
-        "title": "Intercom IP Address",
-        "format": "ipv4"
-      },
-      "username": {
-        "type": "string",
-        "title": "Username",
-        "minLength": 1
-      },
-      "password": {
-        "type": "string",
-        "title": "Password",
-        "minLength": 1
-      },
-      "pollInterval": {
-        "type": "integer",
-        "title": "Poll Interval (ms)",
-        "description": "How often to check intercom availability",
-        "minimum": 1000,
-        "default": 60000
-      },
-      "verboseLogging": {
-        "type": "boolean",
-        "title": "Enable Verbose Logging",
-        "description": "Show detailed debug logs in Homebridge console",
-        "default": false
-      },
-      "fallbackRetries": {
-        "type": "integer",
-        "title": "Retry Attempts on Failure",
-        "description": "Number of times to retry openDoor if it fails",
-        "minimum": 0,
-        "default": 1
-      },
-      "fallbackDelay": {
-        "type": "integer",
-        "title": "Retry Delay (ms)",
-        "description": "Delay between retry attempts",
-        "minimum": 0,
-        "default": 5000
-      },
-      "autoLockTime": {
-        "type": "integer",
-        "title": "Auto-lock Duration",
-        "description": "Time before gate auto-locks. 0 = disabled",
-        "minimum": 0,
-        "default": 0
-      },
-      "autoLockUnit": {
-        "type": "string",
-        "title": "Auto-lock Unit",
-        "description": "Unit of time for auto-lock duration",
-        "enum": ["seconds", "hours", "days"],
-        "default": "seconds"
+      "devices": {
+        "title": "Devices",
+        "type": "array",
+        "items": {
+          "title": "Device",
+          "type": "object",
+          "required": ["name", "ip", "username", "password"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "title": "Accessory Name",
+              "minLength": 1
+            },
+            "ip": {
+              "type": "string",
+              "title": "Intercom IP Address",
+              "format": "ipv4"
+            },
+            "username": {
+              "type": "string",
+              "title": "Username",
+              "minLength": 1
+            },
+            "password": {
+              "type": "string",
+              "title": "Password",
+              "minLength": 1
+            },
+            "pollInterval": {
+              "type": "integer",
+              "title": "Poll Interval (ms)",
+              "description": "How often to check intercom availability",
+              "minimum": 1000,
+              "default": 60000
+            },
+            "verboseLogging": {
+              "type": "boolean",
+              "title": "Enable Verbose Logging",
+              "description": "Show detailed debug logs in Homebridge console",
+              "default": false
+            },
+            "fallbackRetries": {
+              "type": "integer",
+              "title": "Retry Attempts on Failure",
+              "description": "Number of times to retry openDoor if it fails",
+              "minimum": 0,
+              "default": 1
+            },
+            "fallbackDelay": {
+              "type": "integer",
+              "title": "Retry Delay (ms)",
+              "description": "Delay between retry attempts",
+              "minimum": 0,
+              "default": 5000
+            },
+            "autoLockTime": {
+              "type": "integer",
+              "title": "Auto-lock Duration",
+              "description": "Time before gate auto-locks. 0 = disabled",
+              "minimum": 0,
+              "default": 0
+            },
+            "autoLockUnit": {
+              "type": "string",
+              "title": "Auto-lock Unit",
+              "description": "Unit of time for auto-lock duration",
+              "enum": ["seconds", "hours", "days"],
+              "default": "seconds"
+            }
+          }
+        }
       }
     }
   }
