@@ -7,6 +7,11 @@
     "title": "Dahua Gate",
     "type": "object",
     "properties": {
+      "name": {
+        "type": "string",
+        "title": "Platform Name",
+        "default": "Dahua Gate"
+        },
       "devices": {
         "title": "Devices",
         "type": "array",
