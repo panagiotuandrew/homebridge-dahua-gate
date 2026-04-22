@@ -1,6 +1,9 @@
 name: Report a working device
 description: Report a device that works with this plugin
-
+title: 'Device Request:'
+labels:
+  - device-request
+  - pending
 body:
   - type: input
     id: plugin-name
