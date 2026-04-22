@@ -35,19 +35,23 @@ class DahuaGatePlatform {
   }
 
   for (const device of devices) {
-    const uuid = this.api.hap.uuid.generate(device.name);
-    const existingAccessory = this.accessories.find(a => a.UUID === uuid);
+    try {
+      const uuid = this.api.hap.uuid.generate(device.name);
+      const existingAccessory = this.accessories.find(a => a.UUID === uuid);
 
-    if (existingAccessory) {
-      this.log.info(`Restoring accessory from cache: ${existingAccessory.displayName}`);
-      new DahuaGateAccessory(this.log, existingAccessory, this.api, device);
-    } else {
-      this.log.info(`Adding new accessory: ${device.name}`);
-      const accessory = new this.api.platformAccessory(device.name, uuid);
-      new DahuaGateAccessory(this.log, accessory, this.api, device);
-      this.api.registerPlatformAccessories("homebridge-dahua-gate", "Dahua Gate", [accessory]);
+      if (existingAccessory) {
+        this.log.info(`Restoring accessory from cache: ${existingAccessory.displayName}`);
+        new DahuaGateAccessory(this.log, existingAccessory, this.api, device);
+      } else {
+        this.log.info(`Adding new accessory: ${device.name}`);
+        const accessory = new this.api.platformAccessory(device.name, uuid);
+        new DahuaGateAccessory(this.log, accessory, this.api, device);
+        this.api.registerPlatformAccessories("homebridge-dahua-gate", "Dahua Gate", [accessory]);
+      }
+    } catch (err) {
+      this.log.error(`Failed to initialize device "${device.name}": ${err.message}`);
     }
-  }
+  }  
 }
 }
 class DahuaGateAccessory {
