@@ -1,5 +1,5 @@
 name: Report working device
-about: Report a confirmed working device
+description: Report a confirmed working device
 
 body:
   - type: markdown
